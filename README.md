@@ -135,13 +135,20 @@ Esta organización permite:
 
 ## 💻 Uso
 
+### Mensajes de Bienvenida
+
+Cuando abres la app, Coin te da la bienvenida con tres mensajes iniciales:
+1. "Hola, soy Coin 👋"
+2. "Estoy aquí para ayudarte a responder tus preguntas de forma simple y directa."
+3. "Te responderé únicamente con "Sí" o "No". Nada más, nada menos 😉."
+
 ### Enviar Mensajes
 
 1. Escribe tu mensaje en el campo de texto en la parte inferior
 2. Presiona Enter o el botón de envío
 3. El mensaje aparecerá en la burbuja azul (usuario)
-4. Si tu mensaje termina en "?", Anny responderá automáticamente
-5. Las respuestas de Anny aparecerán en burbujas grises con texto e imagen GIF
+4. Si tu mensaje termina en "?", Coin responderá automáticamente
+5. Las respuestas de Coin aparecerán en burbujas grises con texto e imagen GIF
 6. El chat se desplaza automáticamente al último mensaje
 
 ### Cambiar Tema
@@ -172,7 +179,7 @@ int _currentThemeIndex = 2; // Cambia el número (0-7)
 | **ThemeProvider** | Provider que gestiona el tema dinámico de la aplicación |
 | **ChatScreen** | Pantalla principal con AppBar, menú de temas, ListView y campo de entrada |
 | **MyMessageBubble** | Widget para burbujas de mensajes del usuario (azules) |
-| **HerMessageBubble** | Widget para mensajes recibidos con soporte de imágenes dinámicas y animación de carga |
+| **HerMessageBubble** | Widget para mensajes recibidos con soporte de imágenes dinámicas, animación de carga y renderizado condicional (solo muestra imagen si existe) |
 | **MessageFieldBox** | Campo de entrada con gestión de foco y validación |
 | **AppTheme** | Sistema de temas con `colorSchemeSeed` para paletas completas |
 
@@ -246,6 +253,8 @@ int _currentThemeIndex = 2; // Cambia el número (0-7)
    - Reutilización de componentes
    - Comentarios descriptivos y educativos
    - Modelos de datos vs Entidades del dominio
+   - Renderizado condicional de widgets (if en listas)
+   - Manejo seguro de valores opcionales (null safety)
 
 ## 🛠️ Tecnologías
 
