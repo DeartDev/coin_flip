@@ -12,7 +12,10 @@ import 'package:flutter/material.dart';
 /// - Auto-limpieza después de enviar
 /// - Gestión de foco del teclado
 class MessageFieldBox extends StatelessWidget {
-  const MessageFieldBox({super.key});
+
+  final ValueChanged<String>? onValue;
+
+  const MessageFieldBox({super.key, required this.onValue});
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +57,7 @@ class MessageFieldBox extends StatelessWidget {
           // onPressed: Acción al presionar el botón de envío
           onPressed: () {
             final textValue = textController.value.text;
-            print('button: $textValue');
+            onValue?.call(textValue);
             // Limpia el campo después de enviar
             textController.clear();
           },
@@ -82,7 +85,7 @@ class MessageFieldBox extends StatelessWidget {
       
       // onFieldSubmitted: Se ejecuta al presionar Enter/Done en el teclado
       onFieldSubmitted: (value) {
-        print('Valor enviado: $value');
+        onValue?.call(value);
         // Limpia el campo después de enviar
         textController.clear();
         // Mantiene el foco para seguir escribiendo
