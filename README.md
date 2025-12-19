@@ -13,11 +13,15 @@ Yes No App es una aplicación Flutter de chat interactivo que simula conversacio
 - 🔄 Gestión de estado con Provider
 - 💬 Interfaz de chat con burbujas de mensajes estilizadas
 - 🤖 Chat interactivo con asistente virtual "Anny"
-- 🏗️ Arquitectura limpia con separación de capas (domain, presentation)
+- � Integración con API Yes/No para respuestas automáticas
+- 🔄 Respuestas automáticas cuando el mensaje termina en "?"
+- 📜 Scroll automático al último mensaje con animación suave
+- 🏗️ Arquitectura limpia con separación de capas (domain, infrastructure, presentation, config)
 - 📝 ListView.builder optimizado para múltiples mensajes
 - 🎭 Avatar personalizado con imágenes de red
-- 🖼️ Soporte para mensajes con imágenes GIF
+- 🖼️ Soporte para mensajes con imágenes GIF desde API
 - ⌨️ Control de foco del teclado y entrada de texto
+- 🔌 Peticiones HTTP con Dio
 - 📖 **Código completamente comentado para aprendizaje**
 
 ## 🎨 Temas Disponibles
@@ -53,6 +57,7 @@ flutter run
 - **Flutter SDK**: ^3.5.1
 - **cupertino_icons**: ^1.0.8 - Iconos estilo iOS
 - **provider**: ^6.1.5+1 - Gestión de estado
+- **dio**: ^5.9.0 - Cliente HTTP para peticiones a la API
 
 ## 🏗️ Estructura del Proyecto
 
@@ -60,11 +65,16 @@ flutter run
 lib/
 ├── main.dart                              # Punto de entrada de la aplicación
 ├── config/
+│   ├── helpers/
+│   │   └── get_yes_no_answer.dart         # Helper para peticiones a la API Yes/No
 │   └── themes/
 │       └── app_theme.dart                 # Configuración de temas personalizados
 ├── domain/
 │   └── entities/
 │       └── message.dart                   # Entidad Message y enum FromWho
+├── infrastructure/
+│   └── models/
+│       └── yes_no_model.dart              # Modelo para mapear respuestas de la API
 └── presentation/
     ├── providers/
     │   └── chat_provider.dart             # Provider para gestión de estado del chat
@@ -127,7 +137,9 @@ Esta organización permite:
 1. Escribe tu mensaje en el campo de texto en la parte inferior
 2. Presiona Enter o el botón de envío
 3. El mensaje aparecerá en la burbuja azul (usuario)
-4. Los mensajes de respuesta aparecerán en burbujas grises con avatar
+4. Si tu mensaje termina en "?", Anny responderá automáticamente
+5. Las respuestas de Anny aparecerán en burbujas grises con texto e imagen GIF
+6. El chat se desplaza automáticamente al último mensaje
 
 ### Cambiar Tema
 
@@ -143,10 +155,12 @@ theme: AppTheme(selectColor: 2).theme(), // Cambia el número (0-7)
 |------------|-------------|
 | **Message** | Entidad del dominio que representa un mensaje con texto, imagen opcional y remitente |
 | **FromWho** | Enumeración que identifica el origen del mensaje (`me` o `hers`) |
-| **ChatProvider** | Provider que gestiona el estado y la lista de mensajes |
+| **YesNoModel** | Modelo de infrastructure que mapea las respuestas JSON de la API |
+| **GetYesNoAnswer** | Helper que realiza peticiones HTTP a la API Yes/No con Dio |
+| **ChatProvider** | Provider que gestiona el estado, mensajes y scroll automático |
 | **ChatScreen** | Pantalla principal con AppBar, ListView y campo de entrada |
 | **MyMessageBubble** | Widget para burbujas de mensajes del usuario (azules) |
-| **HerMessageBubble** | Widget para mensajes recibidos con soporte de imágenes |
+| **HerMessageBubble** | Widget para mensajes recibidos con soporte de imágenes dinámicas |
 | **MessageFieldBox** | Campo de entrada con gestión de foco y validación |
 | **AppTheme** | Sistema de temas con `colorSchemeSeed` para paletas completas |
 
@@ -155,40 +169,52 @@ theme: AppTheme(selectColor: 2).theme(), // Cambia el número (0-7)
 ### Conceptos Flutter Cubiertos
 
 #### 1. **Arquitectura y Gestión de Estado**
-   - Separación en capas: domain, config, presentation
+   - Separación en capas: domain, infrastructure, config, presentation
    - Entidades del dominio (Message)
+   - Modelos de infrastructure (YesNoModel)
    - Enumeraciones (enum) para tipos seguros (FromWho)
    - Provider para gestión de estado reactivo
    - ChangeNotifier y notifyListeners()
    - Clases inmutables con final
+   - Helpers para lógica reutilizable
 
-#### 2. **StatelessWidget vs StatefulWidget**
+#### 2. **Peticiones HTTP y APIs**
+   - Integración con API REST (https://yesno.wtf/api)
+   - Uso de Dio para peticiones HTTP
+   - Mapeo de JSON a modelos Dart
+   - Conversión de modelos a entidades del dominio
+   - Manejo asíncrono con async/await
+   - Future y programación asíncrona
+
+#### 3. **StatelessWidget vs StatefulWidget**
    - Diferencias conceptuales y de rendimiento
    - Cuándo usar cada uno
    - Ciclo de vida de StatefulWidget
    - Gestión de estado local
 
-#### 3. **Layouts en Flutter**
+#### 4. **Layouts y Animaciones**
    - Column y Row para organización
    - Expanded y Flexible para distribución de espacio
    - ListView.builder para listas eficientes y optimizadas
+   - ScrollController para control programático de scroll
+   - Animaciones con animateTo() y curvas de animación
    - SafeArea para evitar zonas del sistema
    - Padding y margin para espaciado
 
-#### 4. **Material Design 3**
+#### 5. **Material Design 3**
    - Scaffold como estructura base
    - AppBar personalizada con avatar
    - ThemeData y ColorScheme
    - ColorSchemeSeed para paletas automáticas
    - Componentes Material adaptables
 
-#### 5. **Widgets de Imagen**
+#### 6. **Widgets de Imagen**
    - NetworkImage para cargar desde internet
    - ClipRRect para bordes redondeados
    - BoxFit para ajuste responsivo
    - Manejo de carga asíncrona de imágenes
 
-#### 6. **Entrada de Texto y Formularios**
+#### 7. **Entrada de Texto y Formularios**
    - TextFormField para entrada de datos
    - TextEditingController para control programático
    - FocusNode para gestión del teclado
@@ -196,13 +222,14 @@ theme: AppTheme(selectColor: 2).theme(), // Cambia el número (0-7)
    - Callbacks: onFieldSubmitted, onTapOutside
    - Validación de entrada
 
-#### 7. **Mejores Prácticas**
+#### 8. **Mejores Prácticas**
    - Separación de responsabilidades
    - Widgets privados con prefijo (_)
    - Organización modular de carpetas
    - Arquitectura limpia (Clean Architecture)
    - Reutilización de componentes
    - Comentarios descriptivos y educativos
+   - Modelos de datos vs Entidades del dominio
 
 ## 🛠️ Tecnologías
 
@@ -210,6 +237,7 @@ theme: AppTheme(selectColor: 2).theme(), // Cambia el número (0-7)
 - **Dart** - Lenguaje de programación orientado a objetos
 - **Material 3** - Sistema de diseño de Google
 - **Provider** - Solución de gestión de estado recomendada por Flutter
+- **Dio** ^5.9.0 - Cliente HTTP potente para peticiones REST
 
 ## 📸 Capturas de Pantalla
 

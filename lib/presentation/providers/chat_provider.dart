@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:yes_no_app/config/helpers/get_yes_no_answer.dart';
 import 'package:yes_no_app/domain/entities/message.dart';
+import 'package:yes_no_app/presentation/widgets/chat/her_message_bubble.dart';
 
 /// ChatProvider - Gestor de estado para el chat
 ///
@@ -7,14 +9,22 @@ import 'package:yes_no_app/domain/entities/message.dart';
 ///
 /// Propiedades:
 /// - chatScrollController: ScrollController para controlar el scroll del ListView
+/// - getYesNoAnswer: Helper para obtener respuestas de la API Yes/No
 /// - messageList: Lista de mensajes del chat con mensajes iniciales
 ///
 /// Métodos:
 /// - sendMessage(String text): Agrega un nuevo mensaje a la lista y desplaza al final
 ///   * Valida que el texto no esté vacío
 ///   * Crea un nuevo Message con fromWho.me
+///   * Si el texto termina en '?', llama a herReply() para obtener respuesta
 ///   * Notifica a los oyentes del cambio
 ///   * Llama a moveScrollToBottom()
+///
+/// - herReply(): Obtiene y agrega la respuesta automática de "Anny"
+///   * Llama a getYesNoAnswer.getAnswer() para obtener mensaje de la API
+///   * Agrega el mensaje recibido a messageList
+///   * Notifica a los oyentes
+///   * Desplaza al final con moveScrollToBottom()
 ///
 /// - moveScrollToBottom(): Desplaza el scroll hasta el último mensaje
 ///   * Espera 100ms para que el mensaje se renderice
@@ -22,6 +32,7 @@ import 'package:yes_no_app/domain/entities/message.dart';
 ///   * Duración de animación: 300ms con curva easeOut
 class ChatProvider extends ChangeNotifier {
   final ScrollController chatScrollController = ScrollController();
+  final GetYesNoAnswer getYesNoAnswer = GetYesNoAnswer();
 
   List<Message> messageList = [
     Message(text: 'Hola', fromWho: FromWho.me),
@@ -33,6 +44,18 @@ class ChatProvider extends ChangeNotifier {
 
     final newMessage = Message(text: text, fromWho: FromWho.me);
     messageList.add(newMessage);
+
+    if (text.endsWith('?')) {
+      await herReply();
+    }
+
+    notifyListeners();
+    moveScrollToBottom();
+  }
+
+  Future<void> herReply() async {
+    final herMessage = await getYesNoAnswer.getAnswer();
+    messageList.add(herMessage);
     notifyListeners();
     moveScrollToBottom();
   }

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:yes_no_app/domain/entities/message.dart';
 
 /// HerMessageBubble - Burbuja de mensaje recibido de la otra persona
+///
+/// Propiedades:
+/// - message: Objeto Message que contiene el texto y la URL de la imagen
 ///
 /// Widgets utilizados:
 /// - Column: Organiza los elementos verticalmente
@@ -8,11 +12,13 @@ import 'package:flutter/material.dart';
 /// - Container: Contenedor con decoración para la burbuja de texto
 ///   * decoration: BoxDecoration con color secundario y bordes redondeados (20px)
 /// - Padding: Espacio interno de 8.0 píxeles
-/// - Text: Muestra "Hola Mundo!" con estilo de color blanco
+/// - Text: Muestra message.text con estilo de color blanco
 /// - SizedBox: Espacios verticales (5px entre texto e imagen, 10px después)
-/// - _ImageBubble: Widget privado que muestra la imagen GIF
+/// - _ImageBubble: Widget privado que muestra la imagen GIF desde message.imageUrl
 class HerMessageBubble extends StatelessWidget {
-  const HerMessageBubble({super.key});
+  final Message message;
+
+  const HerMessageBubble({super.key, required this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -26,16 +32,16 @@ class HerMessageBubble extends StatelessWidget {
             color: colors.secondary,
             borderRadius: BorderRadius.circular(20),
           ),
-          child: const Padding(
-            padding: EdgeInsets.all(8.0),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
             child: Text(
-              'Hola Mundo!',
-              style: TextStyle(color: Colors.white),
+              message.text,
+              style: const TextStyle(color: Colors.white),
             ),
           ),
         ),
         const SizedBox(height: 5),
-        _ImageBubble(),
+        _ImageBubble(message.imageUrl!),
         const SizedBox(height: 10)
       ],
     );
@@ -43,6 +49,9 @@ class HerMessageBubble extends StatelessWidget {
 }
 
 /// _ImageBubble - Widget privado que muestra una imagen GIF
+///
+/// Propiedades:
+/// - imageUrl: URL de la imagen a mostrar (recibida desde message.imageUrl)
 ///
 /// Widgets utilizados:
 /// - ClipRRect: Recorta la imagen con bordes redondeados (20px)
@@ -55,7 +64,12 @@ class HerMessageBubble extends StatelessWidget {
 /// Funcionalidad:
 /// - MediaQuery obtiene el tamaño de la pantalla para hacer la imagen responsiva
 /// - loadingBuilder previene pantallas en blanco durante la carga
+/// - SizedBox mantiene el espacio reservado mientras la imagen carga
 class _ImageBubble extends StatelessWidget {
+  final String imageUrl;
+
+  const _ImageBubble(this.imageUrl);
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -63,7 +77,7 @@ class _ImageBubble extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: Image.network(
-        'https://yesno.wtf/assets/no/14-cb78bf7104f848794808d61b9cd83eba.gif',
+        imageUrl,
         width: size.width * 0.7,
         height: 150,
         fit: BoxFit.cover,
