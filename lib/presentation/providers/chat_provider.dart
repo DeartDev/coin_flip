@@ -10,6 +10,7 @@ import 'package:coin_flip_app/domain/entities/message.dart';
 /// - chatScrollController: ScrollController para controlar el scroll del ListView
 /// - getYesNoAnswer: Helper para obtener respuestas de la API Yes/No
 /// - messageList: Lista de mensajes del chat con mensajes iniciales
+/// - isTyping: Indica si Coin está "escribiendo" una respuesta
 ///
 /// Métodos:
 /// - sendMessage(String text): Agrega un nuevo mensaje a la lista y desplaza al final
@@ -19,8 +20,11 @@ import 'package:coin_flip_app/domain/entities/message.dart';
 ///   * Notifica a los oyentes del cambio
 ///   * Llama a moveScrollToBottom()
 ///
-/// - herReply(): Obtiene y agrega la respuesta automática de "Anny"
+/// - herReply(): Obtiene y agrega la respuesta automática de Coin
+///   * Activa isTyping = true para mostrar indicador
+///   * Espera 1 segundo para simular "pensamiento"
 ///   * Llama a getYesNoAnswer.getAnswer() para obtener mensaje de la API
+///   * Desactiva isTyping = false
 ///   * Agrega el mensaje recibido a messageList
 ///   * Notifica a los oyentes
 ///   * Desplaza al final con moveScrollToBottom()
@@ -38,7 +42,8 @@ class ChatProvider extends ChangeNotifier {
     Message(text: 'Estoy aquí para ayudarte a responder tus preguntas de forma simple y directa.', fromWho: FromWho.hers),
     Message(text: 'Te responderé únicamente con “Sí” o “No”. Nada más, nada menos 😉.', fromWho: FromWho.hers),
   ];
-
+  bool _isTyping = false;
+  bool get isTyping => _isTyping;
   Future<void> sendMessage(String text) async {
     if (text.isEmpty) return;
 
@@ -54,7 +59,16 @@ class ChatProvider extends ChangeNotifier {
   }
 
   Future<void> herReply() async {
+    _isTyping = true;
+    notifyListeners();
+    moveScrollToBottom();
+
+    // Simula tiempo de "pensamiento" de Coin
+    await Future.delayed(const Duration(milliseconds: 1000));
+
     final herMessage = await getYesNoAnswer.getAnswer();
+    
+    _isTyping = false;
     messageList.add(herMessage);
     notifyListeners();
     moveScrollToBottom();

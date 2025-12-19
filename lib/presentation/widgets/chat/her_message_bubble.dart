@@ -1,20 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:coin_flip_app/domain/entities/message.dart';
 
-/// HerMessageBubble - Burbuja de mensaje recibido de la otra persona
+/// HerMessageBubble - Burbuja de mensaje recibido de la otra persona con animación
 ///
 /// Propiedades:
 /// - message: Objeto Message que contiene el texto y la URL de la imagen
 ///
 /// Widgets utilizados:
+/// - TweenAnimationBuilder: Crea animación automática al construirse
+///   * duration: 400ms para efecto suave
+///   * tween: Tween<double> de 0.0 a 1.0 para controlar progreso
+/// - Transform.translate: Desplaza el widget (slide desde la izquierda)
+///   * offset: Se calcula inversamente al progreso (empieza en -50px a la izquierda)
+/// - Opacity: Controla la transparencia (fade in)
 /// - Column: Organiza los elementos verticalmente
 ///   * crossAxisAlignment: CrossAxisAlignment.start - Alinea a la izquierda
 /// - Container: Contenedor con decoración para la burbuja de texto
 ///   * decoration: BoxDecoration con color secundario y bordes redondeados (20px)
 /// - Padding: Espacio interno de 8.0 píxeles
 /// - Text: Muestra message.text con estilo de color blanco
-/// - SizedBox: Espacios verticales (5px entre texto e imagen, 10px después)
+/// - SizedBox: Espacios verticales (5px entre texto e imagen)
 /// - _ImageBubble: Widget privado que muestra la imagen GIF desde message.imageUrl
+///
+/// Animaciones:
+/// - Slide: Entra desde la izquierda (-50px) hasta su posición final
+/// - Fade: Opacidad de 0 a 1
+/// - Curva: Curves.easeOut para desaceleración natural
 class HerMessageBubble extends StatelessWidget {
   final Message message;
 
@@ -24,26 +35,40 @@ class HerMessageBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            color: colors.secondary,
-            borderRadius: BorderRadius.circular(20),
+    return TweenAnimationBuilder(
+      duration: const Duration(milliseconds: 400),
+      tween: Tween<double>(begin: 0.0, end: 1.0),
+      curve: Curves.easeOut,
+      builder: (context, double value, child) {
+        return Transform.translate(
+          offset: Offset(-50 * (1 - value), 0),
+          child: Opacity(
+            opacity: value,
+            child: child,
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              message.text,
-              style: const TextStyle(color: Colors.white),
+        );
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: colors.secondary,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                message.text,
+                style: const TextStyle(color: Colors.white),
+              ),
             ),
           ),
-        ),
-        const SizedBox(height: 5),
-        if (message.imageUrl != null) _ImageBubble(message.imageUrl!),
-        const SizedBox(height: 5)
-      ],
+          const SizedBox(height: 5),
+          if (message.imageUrl != null) _ImageBubble(message.imageUrl!),
+          const SizedBox(height: 5)
+        ],
+      ),
     );
   }
 }

@@ -5,6 +5,7 @@ import 'package:coin_flip_app/presentation/providers/chat_provider.dart';
 import 'package:coin_flip_app/presentation/providers/theme_provider.dart';
 import 'package:coin_flip_app/presentation/widgets/chat/her_message_bubble.dart';
 import 'package:coin_flip_app/presentation/widgets/chat/my_message_bubble.dart';
+import 'package:coin_flip_app/presentation/widgets/chat/typing_indicator.dart';
 import 'package:coin_flip_app/presentation/widgets/shared/message_field_box.dart';
 
 /// ChatScreen - Pantalla principal del chat
@@ -95,8 +96,9 @@ class ChatScreen extends StatelessWidget {
 /// - Expanded: Expande el ListView para llenar el espacio disponible
 /// - ListView.builder: Lista optimizada que construye solo los elementos visibles
 ///   * controller: chatScrollController del provider para control de scroll automático
-///   * itemCount: Número de mensajes en la lista
+///   * itemCount: Número de mensajes + 1 si está escribiendo (para mostrar indicador)
 ///   * itemBuilder: Construye cada mensaje según su tipo
+/// - TypingIndicator: Indicador animado que se muestra cuando isTyping = true
 /// - MessageFieldBox: Campo de entrada de texto para escribir mensajes
 ///
 /// Lógica:
@@ -105,6 +107,7 @@ class ChatScreen extends StatelessWidget {
 /// - itemBuilder: Determina qué tipo de burbuja mostrar según message.fromWho
 /// - HerMessageBubble: Para mensajes recibidos (FromWho.hers)
 /// - MyMessageBubble: Para mensajes enviados (FromWho.me)
+/// - TypingIndicator: Se muestra al final cuando Coin está "escribiendo"
 /// - onValue: Callback que envía el mensaje cuando el usuario presiona enviar
 class _ChatView extends StatelessWidget {
   @override
@@ -119,8 +122,13 @@ class _ChatView extends StatelessWidget {
             Expanded(
               child: ListView.builder(
                 controller: chatProvider.chatScrollController,
-                itemCount: chatProvider.messageList.length,
+                itemCount: chatProvider.messageList.length + (chatProvider.isTyping ? 1 : 0),
                 itemBuilder: (context, index) {
+                  // Mostrar indicador de "escribiendo" al final si está activo
+                  if (index == chatProvider.messageList.length) {
+                    return const TypingIndicator();
+                  }
+
                   final message = chatProvider.messageList[index];
                   return (message.fromWho == FromWho.hers)
                       ? HerMessageBubble(message: message)
