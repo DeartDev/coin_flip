@@ -45,13 +45,18 @@ class ChatScreen extends StatelessWidget {
 /// - Column: Organiza los widgets verticalmente
 /// - Expanded: Expande el ListView para llenar el espacio disponible
 /// - ListView.builder: Lista optimizada que construye solo los elementos visibles
+///   * controller: chatScrollController del provider para control de scroll automático
+///   * itemCount: Número de mensajes en la lista
+///   * itemBuilder: Construye cada mensaje según su tipo
 /// - MessageFieldBox: Campo de entrada de texto para escribir mensajes
 ///
 /// Lógica:
 /// - context.watch<ChatProvider>(): Observa cambios en el estado del chat
+/// - chatScrollController: Permite desplazamiento automático al último mensaje
 /// - itemBuilder: Determina qué tipo de burbuja mostrar según message.fromWho
 /// - HerMessageBubble: Para mensajes recibidos (FromWho.hers)
 /// - MyMessageBubble: Para mensajes enviados (FromWho.me)
+/// - onValue: Callback que envía el mensaje cuando el usuario presiona enviar
 class _ChatView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -64,6 +69,7 @@ class _ChatView extends StatelessWidget {
           children: [
             Expanded(
               child: ListView.builder(
+                controller: chatProvider.chatScrollController,
                 itemCount: chatProvider.messageList.length,
                 itemBuilder: (context, index) {
                   final message = chatProvider.messageList[index];
