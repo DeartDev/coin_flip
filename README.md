@@ -9,10 +9,11 @@ Coin Flip App es una aplicación Flutter de chat interactivo que simula conversa
 ## ✨ Características
 
 - 🎨 Sistema de temas personalizables con 8 esquemas de color diferentes
+- � Cambio de tema dinámico mediante menú desplegable en AppBar
 - 📱 Diseño Material 3 moderno
-- 🔄 Gestión de estado con Provider
+- 🔄 Gestión de estado reactiva con Provider (ChatProvider y ThemeProvider)
 - 💬 Interfaz de chat con burbujas de mensajes estilizadas
-- 🤖 Chat interactivo con asistente virtual "Anny"
+- 🤖 Chat interactivo con asistente virtual "Coin"
 - 🌐 Integración con API externa para respuestas automáticas
 - 🔄 Respuestas automáticas cuando el mensaje termina en "?"
 - 📜 Scroll automático al último mensaje con animación suave
@@ -20,6 +21,7 @@ Coin Flip App es una aplicación Flutter de chat interactivo que simula conversa
 - 📝 ListView.builder optimizado para múltiples mensajes
 - 🎭 Avatar personalizado con imágenes de red
 - 🖼️ Soporte para mensajes con imágenes GIF desde API
+- ⏳ Indicador de carga animado (CircularProgressIndicator) mientras se cargan las imágenes
 - ⌨️ Control de foco del teclado y entrada de texto
 - 🔌 Peticiones HTTP con Dio
 - 📖 **Código completamente comentado para aprendizaje**
@@ -66,7 +68,7 @@ lib/
 ├── main.dart                              # Punto de entrada de la aplicación
 ├── config/
 │   ├── helpers/
-│   │   └── get_yes_no_answer.dart         # Helper para peticiones a la API Yes/No
+│   │   └── get_yes_no_answer.dart         # Helper para peticiones a la API externa
 │   └── themes/
 │       └── app_theme.dart                 # Configuración de temas personalizados
 ├── domain/
@@ -77,14 +79,15 @@ lib/
 │       └── yes_no_model.dart              # Modelo para mapear respuestas de la API
 └── presentation/
     ├── providers/
-    │   └── chat_provider.dart             # Provider para gestión de estado del chat
+    │   ├── chat_provider.dart             # Provider para gestión de estado del chat
+    │   └── theme_provider.dart            # Provider para gestión de temas dinámicos
     ├── Screens/
     │   └── chat/
-    │       └── chat_screen.dart           # Pantalla principal de chat
+    │       └── chat_screen.dart           # Pantalla principal de chat con menú de temas
     └── widgets/
         ├── chat/
         │   ├── my_message_bubble.dart     # Burbuja de mensaje del usuario
-        │   └── her_message_bubble.dart    # Burbuja de mensaje recibido con imagen
+        │   └── her_message_bubble.dart    # Burbuja de mensaje recibido con imagen y animación de carga
         └── shared/
             └── message_field_box.dart     # Campo de entrada de texto con control de foco
 ```
@@ -143,10 +146,18 @@ Esta organización permite:
 
 ### Cambiar Tema
 
-Para cambiar el tema de la aplicación, modifica el parámetro `selectColor` en [main.dart](lib/main.dart):
+La aplicación permite cambiar el tema de dos formas:
+
+**1. Desde la interfaz de usuario (Recomendado)**:
+- Haz clic en el icono de paleta (🎨) en el AppBar (esquina superior derecha)
+- Selecciona el color deseado del menú desplegable
+- El tema se aplicará inmediatamente en toda la aplicación
+
+**2. Modificando el código (solo desarrollo)**:
+Puedes cambiar el tema inicial modificando el valor en [lib/presentation/providers/theme_provider.dart](lib/presentation/providers/theme_provider.dart):
 
 ```dart
-theme: AppTheme(selectColor: 2).theme(), // Cambia el número (0-7)
+int _currentThemeIndex = 2; // Cambia el número (0-7)
 ```
 
 ### Componentes Principales
@@ -158,9 +169,10 @@ theme: AppTheme(selectColor: 2).theme(), // Cambia el número (0-7)
 | **YesNoModel** | Modelo de infrastructure que mapea las respuestas JSON de la API |
 | **GetYesNoAnswer** | Helper que realiza peticiones HTTP a la API externa con Dio |
 | **ChatProvider** | Provider que gestiona el estado, mensajes y scroll automático |
-| **ChatScreen** | Pantalla principal con AppBar, ListView y campo de entrada |
+| **ThemeProvider** | Provider que gestiona el tema dinámico de la aplicación |
+| **ChatScreen** | Pantalla principal con AppBar, menú de temas, ListView y campo de entrada |
 | **MyMessageBubble** | Widget para burbujas de mensajes del usuario (azules) |
-| **HerMessageBubble** | Widget para mensajes recibidos con soporte de imágenes dinámicas |
+| **HerMessageBubble** | Widget para mensajes recibidos con soporte de imágenes dinámicas y animación de carga |
 | **MessageFieldBox** | Campo de entrada con gestión de foco y validación |
 | **AppTheme** | Sistema de temas con `colorSchemeSeed` para paletas completas |
 
@@ -203,16 +215,20 @@ theme: AppTheme(selectColor: 2).theme(), // Cambia el número (0-7)
 
 #### 5. **Material Design 3**
    - Scaffold como estructura base
-   - AppBar personalizada con avatar
+   - AppBar personalizada con avatar y menú de temas
+   - PopupMenuButton para selector de temas
    - ThemeData y ColorScheme
    - ColorSchemeSeed para paletas automáticas
    - Componentes Material adaptables
+   - Iconos Material (Icons.palette, Icons.send_outlined, Icons.check)
 
 #### 6. **Widgets de Imagen**
    - NetworkImage para cargar desde internet
    - ClipRRect para bordes redondeados
    - BoxFit para ajuste responsivo
    - Manejo de carga asíncrona de imágenes
+   - CircularProgressIndicator para estado de carga
+   - loadingBuilder para feedback visual durante la descarga
 
 #### 7. **Entrada de Texto y Formularios**
    - TextFormField para entrada de datos

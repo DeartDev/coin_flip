@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:coin_flip_app/config/themes/app_theme.dart';
 import 'package:coin_flip_app/presentation/Screens/chat/chat_screen.dart';
 import 'package:coin_flip_app/presentation/providers/chat_provider.dart';
+import 'package:coin_flip_app/presentation/providers/theme_provider.dart';
 
 /// Punto de entrada de la aplicación Flutter
 ///
@@ -15,10 +16,12 @@ void main() {
 ///
 /// Widgets utilizados:
 /// - MultiProvider: Proporciona múltiples providers a toda la aplicación
-/// - ChangeNotifierProvider: Crea y proporciona una instancia de ChatProvider
+/// - ChangeNotifierProvider: Crea y proporciona instancias de providers
+///   * ChatProvider: Gestiona el estado del chat
+///   * ThemeProvider: Gestiona el tema de la aplicación
 /// - MaterialApp: Configura la aplicación con Material Design
 ///   * debugShowCheckedModeBanner: false - Oculta el banner "DEBUG"
-///   * theme: Define el tema visual usando AppTheme con selectColor: 2 (rojo)
+///   * theme: Define el tema visual usando AppTheme con el índice del ThemeProvider
 ///   * home: Define ChatScreen como pantalla inicial
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -26,11 +29,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => ChatProvider())],
-      child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          theme: AppTheme(selectColor: 2).theme(),
-          home: const ChatScreen()),
+      providers: [
+        ChangeNotifierProvider(create: (_) => ChatProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+      ],
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, _) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme(selectColor: themeProvider.currentThemeIndex).theme(),
+            home: const ChatScreen(),
+          );
+        },
+      ),
     );
   }
 }

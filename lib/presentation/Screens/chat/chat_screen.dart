@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:coin_flip_app/domain/entities/message.dart';
 import 'package:coin_flip_app/presentation/providers/chat_provider.dart';
+import 'package:coin_flip_app/presentation/providers/theme_provider.dart';
 import 'package:coin_flip_app/presentation/widgets/chat/her_message_bubble.dart';
 import 'package:coin_flip_app/presentation/widgets/chat/my_message_bubble.dart';
 import 'package:coin_flip_app/presentation/widgets/shared/message_field_box.dart';
@@ -10,17 +11,21 @@ import 'package:coin_flip_app/presentation/widgets/shared/message_field_box.dart
 ///
 /// Widgets utilizados:
 /// - Scaffold: Proporciona la estructura básica de la pantalla (AppBar, body, etc.)
-/// - AppBar: Barra superior con título y avatar del contacto
+/// - AppBar: Barra superior con título, avatar del contacto y menú de temas
 /// - Padding: Añade espacio interno (4.0 píxeles) alrededor del avatar
 /// - CircleAvatar: Muestra la imagen del contacto en forma circular
 /// - NetworkImage: Carga la imagen del avatar desde una URL de internet
 /// - Text: Muestra el nombre del contacto como título
+/// - PopupMenuButton: Menú desplegable en el AppBar para seleccionar temas
+/// - PopupMenuItem: Cada opción del menú con indicador de color
 /// - _ChatView: Widget privado que contiene la vista del chat
 class ChatScreen extends StatelessWidget {
   const ChatScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = context.watch<ThemeProvider>();
+
     return Scaffold(
       appBar: AppBar(
         leading: const Padding(
@@ -31,6 +36,50 @@ class ChatScreen extends StatelessWidget {
           ),
         ),
         title: const Text('Coin'),
+        actions: [
+          PopupMenuButton<int>(
+            icon: const Icon(Icons.palette),
+            tooltip: 'Cambiar tema',
+            onSelected: (int index) {
+              themeProvider.setTheme(index);
+            },
+            itemBuilder: (BuildContext context) {
+              return List.generate(
+                ThemeProvider.themeNames.length,
+                (index) => PopupMenuItem<int>(
+                  value: index,
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 24,
+                        height: 24,
+                        decoration: BoxDecoration(
+                          color: ThemeProvider.themeColors[index],
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Colors.grey.shade400,
+                            width: 1,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Text(ThemeProvider.themeNames[index]),
+                      if (index == themeProvider.currentThemeIndex)
+                        const Padding(
+                          padding: EdgeInsets.only(left: 8),
+                          child: Icon(
+                            Icons.check,
+                            size: 20,
+                            color: Colors.green,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: _ChatView(),
     );

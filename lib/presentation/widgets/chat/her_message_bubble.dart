@@ -59,12 +59,13 @@ class HerMessageBubble extends StatelessWidget {
 ///   * width: 70% del ancho de la pantalla (size.width * 0.7)
 ///   * height: 150 píxeles fijos
 ///   * fit: BoxFit.cover - Cubre todo el espacio manteniendo proporción
-///   * loadingBuilder: Muestra "Cargando..." mientras descarga la imagen
+///   * loadingBuilder: Muestra CircularProgressIndicator mientras descarga la imagen
 ///
 /// Funcionalidad:
 /// - MediaQuery obtiene el tamaño de la pantalla para hacer la imagen responsiva
 /// - loadingBuilder previene pantallas en blanco durante la carga
-/// - SizedBox mantiene el espacio reservado mientras la imagen carga
+/// - Container con fondo gris y CircularProgressIndicator centrado mientras carga
+/// - Bordes redondeados consistentes con el diseño de las burbujas de mensaje
 class _ImageBubble extends StatelessWidget {
   final String imageUrl;
 
@@ -84,10 +85,16 @@ class _ImageBubble extends StatelessWidget {
         loadingBuilder: (context, child, loadingProgress) {
           if (loadingProgress == null) return child;
 
-          return SizedBox(
+          return Container(
             width: size.width * 0.7,
             height: 150,
-            child: const Text('Cargando...'),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade200,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: const Center(
+              child: CircularProgressIndicator(),
+            ),
           );
         },
       ),
