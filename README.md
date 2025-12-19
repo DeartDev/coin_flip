@@ -81,13 +81,27 @@ lib/
 
 ## 📚 Guía de Aprendizaje
 
-Este proyecto está completamente comentado como recurso educativo. Cada archivo incluye:
+Este proyecto está completamente comentado como recurso educativo. Cada archivo sigue una estructura optimizada de documentación:
 
-### Comentarios Descriptivos
+### Estructura de Comentarios
 
-- **¿Qué hace cada widget?** - Explicación del propósito de cada widget
-- **¿Por qué se usa?** - Razones para elegir ese widget específico
-- **¿Para qué sirve?** - Casos de uso y funcionalidad
+Los comentarios están organizados de manera profesional para facilitar el aprendizaje:
+
+1. **Bloque de documentación al inicio** (usando `///`)
+   - Descripción del widget o clase
+   - Lista de widgets utilizados y su configuración
+   - Propiedades y parámetros
+   - Lógica y funcionalidad principal
+
+2. **Código limpio sin interrupciones**
+   - El código fluye naturalmente sin comentarios intercalados
+   - Fácil de leer y comprender la estructura
+   - Nombres descriptivos de variables y métodos
+
+Esta organización permite:
+- **Consultar la documentación** antes de leer el código
+- **Leer el código limpio** sin distracciones
+- **Aprender patrones** de documentación profesional en Flutter
 
 ### Widgets Principales Utilizados
 

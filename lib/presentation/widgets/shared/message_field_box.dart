@@ -1,94 +1,65 @@
 import 'package:flutter/material.dart';
 
-/// MessageFieldBox - Widget para el campo de texto de entrada de mensajes
-/// 
-/// Este es un StatelessWidget que proporciona un campo de texto estilizado
-/// para que el usuario pueda escribir y enviar mensajes en el chat.
-/// 
-/// Características:
-/// - Campo de texto con bordes redondeados
-/// - Botón de envío integrado
-/// - Soporte para envío con Enter
-/// - Auto-limpieza después de enviar
-/// - Gestión de foco del teclado
+/// MessageFieldBox - Campo de texto para entrada de mensajes
+///
+/// Widgets utilizados:
+/// - TextFormField: Campo de texto con soporte para validación
+///   * controller: TextEditingController - Controla el contenido del campo
+///   * focusNode: FocusNode - Gestiona el estado de foco del teclado
+///   * decoration: InputDecoration - Estilo visual del campo
+///   * onFieldSubmitted: Callback al presionar Enter
+///   * onTapOutside: Callback al tocar fuera del campo
+///
+/// Decoración:
+/// - UnderlineInputBorder con bordes transparentes y redondeados (30px)
+/// - hintText: "Tu mensaje termina en \"?\""
+/// - filled: true (fondo relleno)
+/// - suffixIcon: Botón de enviar con icono Icons.send_outlined
+///
+/// Funcionalidad:
+/// - onValue: Callback que se ejecuta al enviar el mensaje
+/// - Auto-limpieza del campo después de enviar
+/// - Mantiene el foco después de enviar con Enter
+/// - Cierra el teclado al tocar fuera
 class MessageFieldBox extends StatelessWidget {
-
   final ValueChanged<String>? onValue;
 
   const MessageFieldBox({super.key, required this.onValue});
 
   @override
   Widget build(BuildContext context) {
-    // Obtiene los colores del tema actual (comentado, se puede usar para personalización)
-    //final colors = Theme.of(context).colorScheme;
-
-    // TextEditingController: Controla el contenido del campo de texto
-    // Permite leer, escribir y limpiar el texto ingresado
     final textController = TextEditingController();
-    
-    // FocusNode: Gestiona el estado de foco del campo de texto
-    // Permite mostrar/ocultar el teclado programáticamente
     final focusNode = FocusNode();
 
-    // UnderlineInputBorder: Define el estilo del borde del campo de texto
-    // - borderSide transparente: Oculta la línea inferior predeterminada
-    // - borderRadius: Crea esquinas redondeadas de 30 píxeles
     final outlineInputBorder = UnderlineInputBorder(
-      borderSide: const BorderSide( color: Colors.transparent), 
-      borderRadius: BorderRadius.circular(30));
+        borderSide: const BorderSide(color: Colors.transparent),
+        borderRadius: BorderRadius.circular(30));
 
-    // InputDecoration: Configura la apariencia visual del campo de texto
     final inputDecoration = InputDecoration(
-        // hintText: Texto de sugerencia que aparece cuando el campo está vacío
-        hintText: 'Tu mensaje termina en "?"',
-        
-        // enabledBorder: Borde cuando el campo no tiene foco
-        enabledBorder: outlineInputBorder,
-        
-        // focusedBorder: Borde cuando el campo tiene foco (mismo estilo)
-        focusedBorder: outlineInputBorder,
-        
-        // filled: Rellena el fondo del campo con un color
-        filled: true,
-        
-        // suffixIcon: Icono al final del campo (botón de envío)
-        suffixIcon: IconButton(
-          icon: const Icon(Icons.send_outlined),
-          // onPressed: Acción al presionar el botón de envío
-          onPressed: () {
-            final textValue = textController.value.text;
-            onValue?.call(textValue);
-            // Limpia el campo después de enviar
-            textController.clear();
-          },
-        ),
-      );
-      
+      hintText: 'Tu mensaje termina en "?"',
+      enabledBorder: outlineInputBorder,
+      focusedBorder: outlineInputBorder,
+      filled: true,
+      suffixIcon: IconButton(
+        icon: const Icon(Icons.send_outlined),
+        onPressed: () {
+          final textValue = textController.value.text;
+          onValue?.call(textValue);
+          textController.clear();
+        },
+      ),
+    );
 
-    // TextFormField: Widget principal para entrada de texto
-    // Es una versión mejorada de TextField con soporte para validación
     return TextFormField(
-      // onTapOutside: Se ejecuta cuando se toca fuera del campo
-      // Cierra el teclado al tocar fuera del campo de texto
       onTapOutside: (event) {
         focusNode.unfocus();
       },
-      
-      // focusNode: Nodo que controla el estado de foco
       focusNode: focusNode,
-      
-      // controller: Controlador que maneja el texto
       controller: textController,
-      
-      // decoration: Estilo visual del campo
       decoration: inputDecoration,
-      
-      // onFieldSubmitted: Se ejecuta al presionar Enter/Done en el teclado
       onFieldSubmitted: (value) {
         onValue?.call(value);
-        // Limpia el campo después de enviar
         textController.clear();
-        // Mantiene el foco para seguir escribiendo
         focusNode.requestFocus();
       },
     );
