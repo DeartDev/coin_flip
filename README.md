@@ -1,10 +1,10 @@
-# Yes No App 💬
+# Coin Flip App 💬
 
 Una aplicación Flutter de chat interactivo con temas personalizables y arquitectura limpia, ideal para aprender desarrollo Flutter.
 
 ## 📱 Descripción
 
-Yes No App es una aplicación Flutter de chat interactivo que simula conversaciones con un asistente virtual. Implementa un sistema de temas dinámicos utilizando Material 3, gestión de estado con Provider, y presenta una interfaz de chat moderna con burbujas de mensajes personalizadas y avatares.
+Coin Flip App es una aplicación Flutter de chat interactivo que simula conversaciones con un asistente virtual. Implementa un sistema de temas dinámicos utilizando Material 3, gestión de estado con Provider, y presenta una interfaz de chat moderna con burbujas de mensajes personalizadas y avatares.
 
 ## ✨ Características
 
@@ -13,7 +13,7 @@ Yes No App es una aplicación Flutter de chat interactivo que simula conversacio
 - 🔄 Gestión de estado con Provider
 - 💬 Interfaz de chat con burbujas de mensajes estilizadas
 - 🤖 Chat interactivo con asistente virtual "Anny"
-- � Integración con API Yes/No para respuestas automáticas
+- 🌐 Integración con API externa para respuestas automáticas
 - 🔄 Respuestas automáticas cuando el mensaje termina en "?"
 - 📜 Scroll automático al último mensaje con animación suave
 - 🏗️ Arquitectura limpia con separación de capas (domain, infrastructure, presentation, config)
@@ -43,7 +43,7 @@ La aplicación incluye 8 esquemas de color predefinidos:
 git clone https://github.com/DeartDev/dart-y-flutter.git
 
 # Navegar al directorio
-cd yes_no_app
+cd coin_flip_app
 
 # Instalar dependencias
 flutter pub get
@@ -156,7 +156,7 @@ theme: AppTheme(selectColor: 2).theme(), // Cambia el número (0-7)
 | **Message** | Entidad del dominio que representa un mensaje con texto, imagen opcional y remitente |
 | **FromWho** | Enumeración que identifica el origen del mensaje (`me` o `hers`) |
 | **YesNoModel** | Modelo de infrastructure que mapea las respuestas JSON de la API |
-| **GetYesNoAnswer** | Helper que realiza peticiones HTTP a la API Yes/No con Dio |
+| **GetYesNoAnswer** | Helper que realiza peticiones HTTP a la API externa con Dio |
 | **ChatProvider** | Provider que gestiona el estado, mensajes y scroll automático |
 | **ChatScreen** | Pantalla principal con AppBar, ListView y campo de entrada |
 | **MyMessageBubble** | Widget para burbujas de mensajes del usuario (azules) |
@@ -179,7 +179,7 @@ theme: AppTheme(selectColor: 2).theme(), // Cambia el número (0-7)
    - Helpers para lógica reutilizable
 
 #### 2. **Peticiones HTTP y APIs**
-   - Integración con API REST (https://yesno.wtf/api)
+   - Integración con API REST externa
    - Uso de Dio para peticiones HTTP
    - Mapeo de JSON a modelos Dart
    - Conversión de modelos a entidades del dominio

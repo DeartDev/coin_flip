@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:yes_no_app/domain/entities/message.dart';
-import 'package:yes_no_app/presentation/providers/chat_provider.dart';
-import 'package:yes_no_app/presentation/widgets/chat/her_message_bubble.dart';
-import 'package:yes_no_app/presentation/widgets/chat/my_message_bubble.dart';
-import 'package:yes_no_app/presentation/widgets/shared/message_field_box.dart';
+import 'package:coin_flip_app/domain/entities/message.dart';
+import 'package:coin_flip_app/presentation/providers/chat_provider.dart';
+import 'package:coin_flip_app/presentation/widgets/chat/her_message_bubble.dart';
+import 'package:coin_flip_app/presentation/widgets/chat/my_message_bubble.dart';
+import 'package:coin_flip_app/presentation/widgets/shared/message_field_box.dart';
 
 /// ChatScreen - Pantalla principal del chat
 ///
@@ -27,10 +27,10 @@ class ChatScreen extends StatelessWidget {
           padding: EdgeInsets.all(4.0),
           child: CircleAvatar(
             backgroundImage: NetworkImage(
-                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSx4Omn9PdUCS0BJGobfdpRFJkoYtgaDVyeRA&s'),
+                'https://img.freepik.com/free-vector/gradient-gold-coin_78370-4508.jpg?semt=ais_hybrid&w=740&q=80'),
           ),
         ),
-        title: const Text('Anny'),
+        title: const Text('Coin'),
       ),
       body: _ChatView(),
     );

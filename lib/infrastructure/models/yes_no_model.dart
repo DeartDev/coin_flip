@@ -1,4 +1,4 @@
-import 'package:yes_no_app/domain/entities/message.dart';
+import 'package:coin_flip_app/domain/entities/message.dart';
 
 /// YesNoModel - Modelo de datos para la API Yes/No
 ///

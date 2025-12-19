@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:yes_no_app/domain/entities/message.dart';
+import 'package:coin_flip_app/domain/entities/message.dart';
 
 /// HerMessageBubble - Burbuja de mensaje recibido de la otra persona
 ///
