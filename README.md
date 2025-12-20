@@ -17,6 +17,10 @@ Coin Flip App es una aplicación Flutter de chat interactivo que simula conversa
 - 🌐 Integración con API externa para respuestas automáticas
 - 🔄 Respuestas automáticas cuando el mensaje termina en "?"
 - 📜 Scroll automático al último mensaje con animación suave
+- ✨ **Animaciones de entrada fluidas** para burbujas de mensajes (slide + fade, 400ms)
+- ⌨️ **Indicador "Escribiendo..."** animado mientras Coin prepara su respuesta
+- 📊 **Panel de estadísticas** con métricas del chat (preguntas, respuestas, porcentajes, racha)
+- 🎨 **Mejoras visuales** con gradientes de color, sombras y fondo con gradiente
 - 🏗️ Arquitectura limpia con separación de capas (domain, infrastructure, presentation, config)
 - 📝 ListView.builder optimizado para múltiples mensajes
 - 🎭 Avatar personalizado con imágenes de red
@@ -79,15 +83,17 @@ lib/
 │       └── yes_no_model.dart              # Modelo para mapear respuestas de la API
 └── presentation/
     ├── providers/
-    │   ├── chat_provider.dart             # Provider para gestión de estado del chat
+    │   ├── chat_provider.dart             # Provider para gestión de estado del chat y estadísticas
     │   └── theme_provider.dart            # Provider para gestión de temas dinámicos
     ├── Screens/
     │   └── chat/
-    │       └── chat_screen.dart           # Pantalla principal de chat con menú de temas
+    │       └── chat_screen.dart           # Pantalla principal de chat con menú de temas y estadísticas
     └── widgets/
         ├── chat/
-        │   ├── my_message_bubble.dart     # Burbuja de mensaje del usuario
-        │   └── her_message_bubble.dart    # Burbuja de mensaje recibido con imagen y animación de carga
+        │   ├── my_message_bubble.dart     # Burbuja de mensaje del usuario con animación y gradiente
+        │   ├── her_message_bubble.dart    # Burbuja de mensaje recibido con animación, imagen y gradiente
+        │   ├── typing_indicator.dart      # Indicador animado "Escribiendo..."
+        │   └── statistics_drawer.dart     # Drawer con estadísticas del chat
         └── shared/
             └── message_field_box.dart     # Campo de entrada de texto con control de foco
 ```
@@ -122,10 +128,16 @@ Esta organización permite:
 |--------|-----------|-----------|
 | `MaterialApp` | main.dart | Widget raíz que configura la aplicación Material Design |
 | `Scaffold` | chat_screen.dart | Estructura básica de la pantalla con AppBar y body |
-| `AppBar` | chat_screen.dart | Barra superior con título y avatar |
+| `AppBar` | chat_screen.dart | Barra superior con título, menú de temas y botón de estadísticas |
+| `PopupMenuButton` | chat_screen.dart | Menú desplegable para selección de temas |
+| `Drawer` | statistics_drawer.dart | Panel lateral para mostrar estadísticas del chat |
 | `ListView.builder` | chat_screen.dart | Lista optimizada para muchos mensajes |
+| `TweenAnimationBuilder` | Burbujas de mensaje | Animaciones automáticas (slide + fade) |
 | `Column` | Burbujas de mensaje | Organiza widgets verticalmente |
-| `Container` | Burbujas de mensaje | Contenedor con decoración y estilo |
+| `Container` | Burbujas de mensaje, chat_screen | Contenedor con decoración, gradiente y estilo |
+| `LinearGradient` | Burbujas, chat_screen | Gradientes de color para fondos |
+| `BoxShadow` | Burbujas de mensaje | Sombras para efecto de profundidad |
+| `CircularProgressIndicator` | typing_indicator, her_message_bubble | Indicador de carga y animación de escritura |
 | `ClipRRect` | her_message_bubble.dart | Recorta imágenes con bordes redondeados |
 | `SafeArea` | chat_screen.dart | Evita superposición con áreas del sistema |
 | `Expanded` | chat_screen.dart | Expande widgets para llenar espacio disponible |
@@ -146,10 +158,22 @@ Cuando abres la app, Coin te da la bienvenida con tres mensajes iniciales:
 
 1. Escribe tu mensaje en el campo de texto en la parte inferior
 2. Presiona Enter o el botón de envío
-3. El mensaje aparecerá en la burbuja azul (usuario)
-4. Si tu mensaje termina en "?", Coin responderá automáticamente
-5. Las respuestas de Coin aparecerán en burbujas grises con texto e imagen GIF
-6. El chat se desplaza automáticamente al último mensaje
+3. El mensaje aparecerá con una **animación de entrada** (slide + fade) en la burbuja azul
+4. Si tu mensaje termina en "?", aparecerá el **indicador "Escribiendo..."**
+5. Coin responderá automáticamente después de 1 segundo
+6. Las respuestas apareceán con **animación** en burbujas grises con texto e imagen GIF
+7. El chat se desplaza automáticamente al último mensaje
+
+### Ver Estadísticas
+
+1. Toca el icono de **estadísticas** (📊) en la esquina superior derecha del AppBar
+2. Se abrirá un drawer lateral con:
+   - Total de preguntas realizadas
+   - Total de respuestas de Coin
+   - Porcentaje de respuestas "Sí" (con barra verde)
+   - Porcentaje de respuestas "No" (con barra roja)
+   - Racha actual de preguntas
+3. Las estadísticas se actualizan en tiempo real
 
 ### Cambiar Tema
 
@@ -175,11 +199,13 @@ int _currentThemeIndex = 2; // Cambia el número (0-7)
 | **FromWho** | Enumeración que identifica el origen del mensaje (`me` o `hers`) |
 | **YesNoModel** | Modelo de infrastructure que mapea las respuestas JSON de la API |
 | **GetYesNoAnswer** | Helper que realiza peticiones HTTP a la API externa con Dio |
-| **ChatProvider** | Provider que gestiona el estado, mensajes y scroll automático |
+| **ChatProvider** | Provider que gestiona el estado, mensajes, scroll automático, indicador de escritura y estadísticas |
 | **ThemeProvider** | Provider que gestiona el tema dinámico de la aplicación |
-| **ChatScreen** | Pantalla principal con AppBar, menú de temas, ListView y campo de entrada |
-| **MyMessageBubble** | Widget para burbujas de mensajes del usuario (azules) |
-| **HerMessageBubble** | Widget para mensajes recibidos con soporte de imágenes dinámicas, animación de carga y renderizado condicional (solo muestra imagen si existe) |
+| **ChatScreen** | Pantalla principal con AppBar, menú de temas, botón de estadísticas, ListView y campo de entrada |
+| **MyMessageBubble** | Widget para burbujas de mensajes del usuario con animación de entrada, gradiente y sombra |
+| **HerMessageBubble** | Widget para mensajes recibidos con animación, gradiente, sombra e imágenes dinámicas |
+| **TypingIndicator** | Indicador animado con tres puntos que muestra cuando Coin está "escribiendo" |
+| **StatisticsDrawer** | Drawer lateral con estadísticas detalladas del chat (preguntas, respuestas, porcentajes) |
 | **MessageFieldBox** | Campo de entrada con gestión de foco y validación |
 | **AppTheme** | Sistema de temas con `colorSchemeSeed` para paletas completas |
 
@@ -217,17 +243,26 @@ int _currentThemeIndex = 2; // Cambia el número (0-7)
    - ListView.builder para listas eficientes y optimizadas
    - ScrollController para control programático de scroll
    - Animaciones con animateTo() y curvas de animación
+   - **TweenAnimationBuilder para animaciones automáticas**
+   - **Transform.translate para efectos de desplazamiento**
+   - **AnimationController y Animation para animaciones complejas**
+   - **TweenSequence para animaciones secuenciales**
    - SafeArea para evitar zonas del sistema
    - Padding y margin para espaciado
 
 #### 5. **Material Design 3**
    - Scaffold como estructura base
-   - AppBar personalizada con avatar y menú de temas
-   - PopupMenuButton para selector de temas
+   - AppBar personalizada con avatar, menú de temas y botón de estadísticas
+   - Drawer para panel lateral con estadísticas del chat
+   - PopupMenuButton para selector de temas con 8 opciones
    - ThemeData y ColorScheme
    - ColorSchemeSeed para paletas automáticas
+   - **LinearGradient para gradientes de color** en burbujas y fondo
+   - **BoxShadow para efectos de profundidad** en todas las burbujas
    - Componentes Material adaptables
-   - Iconos Material (Icons.palette, Icons.send_outlined, Icons.check)
+   - Iconos Material (Icons.palette, Icons.send_outlined, Icons.check, Icons.analytics)
+   - Card y ListTile para presentación de estadísticas
+   - LinearProgressIndicator para visualizar porcentajes
 
 #### 6. **Widgets de Imagen**
    - NetworkImage para cargar desde internet
@@ -236,6 +271,7 @@ int _currentThemeIndex = 2; // Cambia el número (0-7)
    - Manejo de carga asíncrona de imágenes
    - CircularProgressIndicator para estado de carga
    - loadingBuilder para feedback visual durante la descarga
+   - **Sombras en imágenes para destacar contenido**
 
 #### 7. **Entrada de Texto y Formularios**
    - TextFormField para entrada de datos
@@ -255,6 +291,13 @@ int _currentThemeIndex = 2; // Cambia el número (0-7)
    - Modelos de datos vs Entidades del dominio
    - Renderizado condicional de widgets (if en listas)
    - Manejo seguro de valores opcionales (null safety)
+   - **Animaciones con TweenAnimationBuilder** para transiciones suaves y simples
+   - **Uso de gradientes (LinearGradient) y sombras (BoxShadow)** para mejor UX
+   - **Feedback visual con indicadores de estado** (TypingIndicator, CircularProgressIndicator)
+   - **Delays estratégicos** con Future.delayed para simular respuestas naturales
+   - **Estadísticas en tiempo real** calculadas dinámicamente desde el estado
+   - **MultiProvider** para gestión de múltiples providers (ChatProvider, ThemeProvider)
+   - **Consumer** para reconstrucción selectiva de widgets cuando cambia el estado
 
 ## 🛠️ Tecnologías
 

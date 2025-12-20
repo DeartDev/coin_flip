@@ -27,8 +27,22 @@ class TypingIndicator extends StatelessWidget {
       children: [
         Container(
           decoration: BoxDecoration(
-            color: colors.secondary,
+            gradient: LinearGradient(
+              colors: [
+                colors.secondary,
+                colors.secondary.withOpacity(0.8),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
             borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: colors.secondary.withOpacity(0.3),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
           child: const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),

@@ -53,14 +53,31 @@ class HerMessageBubble extends StatelessWidget {
         children: [
           Container(
             decoration: BoxDecoration(
-              color: colors.secondary,
+              gradient: LinearGradient(
+                colors: [
+                  colors.secondary,
+                  colors.secondary.withOpacity(0.8),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
               borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: colors.secondary.withOpacity(0.3),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
               child: Text(
                 message.text,
-                style: const TextStyle(color: Colors.white),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 15,
+                ),
               ),
             ),
           ),
@@ -100,9 +117,20 @@ class _ImageBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: Image.network(
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Image.network(
         imageUrl,
         width: size.width * 0.7,
         height: 150,
@@ -122,6 +150,7 @@ class _ImageBubble extends StatelessWidget {
             ),
           );
         },
+        ),
       ),
     );
   }

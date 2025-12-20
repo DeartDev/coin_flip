@@ -44,6 +44,36 @@ class ChatProvider extends ChangeNotifier {
   ];
   bool _isTyping = false;
   bool get isTyping => _isTyping;
+
+  /// Obtiene estadísticas del chat
+  /// 
+  /// Retorna un Map con:
+  /// - totalQuestions: Número de preguntas realizadas por el usuario
+  /// - totalAnswers: Número de respuestas de Coin
+  /// - yesPercentage: Porcentaje de respuestas "Sí"
+  /// - noPercentage: Porcentaje de respuestas "No"
+  Map<String, dynamic> getStatistics() {
+    final userMessages = messageList.where((m) => m.fromWho == FromWho.me).length;
+    final coinMessages = messageList.where((m) => m.fromWho == FromWho.hers).toList();
+    
+    // Excluir los mensajes de bienvenida (primeros 3 mensajes)
+    final coinAnswers = coinMessages.length > 3 ? coinMessages.skip(3).toList() : [];
+    
+    final yesAnswers = coinAnswers.where((m) => m.text.toLowerCase().contains('sí')).length;
+    final noAnswers = coinAnswers.where((m) => m.text.toLowerCase().contains('no')).length;
+    
+    final totalAnswers = coinAnswers.length;
+    final yesPercentage = totalAnswers > 0 ? (yesAnswers / totalAnswers) * 100 : 0.0;
+    final noPercentage = totalAnswers > 0 ? (noAnswers / totalAnswers) * 100 : 0.0;
+
+    return {
+      'totalQuestions': userMessages,
+      'totalAnswers': totalAnswers,
+      'yesPercentage': yesPercentage,
+      'noPercentage': noPercentage,
+    };
+  }
+
   Future<void> sendMessage(String text) async {
     if (text.isEmpty) return;
 

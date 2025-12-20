@@ -6,6 +6,7 @@ import 'package:coin_flip_app/presentation/providers/theme_provider.dart';
 import 'package:coin_flip_app/presentation/widgets/chat/her_message_bubble.dart';
 import 'package:coin_flip_app/presentation/widgets/chat/my_message_bubble.dart';
 import 'package:coin_flip_app/presentation/widgets/chat/typing_indicator.dart';
+import 'package:coin_flip_app/presentation/widgets/chat/statistics_drawer.dart';
 import 'package:coin_flip_app/presentation/widgets/shared/message_field_box.dart';
 
 /// ChatScreen - Pantalla principal del chat
@@ -82,6 +83,7 @@ class ChatScreen extends StatelessWidget {
           ),
         ],
       ),
+      endDrawer: const StatisticsDrawer(),
       body: _ChatView(),
     );
   }
@@ -113,35 +115,48 @@ class _ChatView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final chatProvider = context.watch<ChatProvider>();
+    final colors = Theme.of(context).colorScheme;
 
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView.builder(
-                controller: chatProvider.chatScrollController,
-                itemCount: chatProvider.messageList.length + (chatProvider.isTyping ? 1 : 0),
-                itemBuilder: (context, index) {
-                  // Mostrar indicador de "escribiendo" al final si está activo
-                  if (index == chatProvider.messageList.length) {
-                    return const TypingIndicator();
-                  }
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            colors.surface,
+            colors.surfaceContainerHighest.withOpacity(0.3),
+          ],
+        ),
+      ),
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  controller: chatProvider.chatScrollController,
+                  itemCount: chatProvider.messageList.length + (chatProvider.isTyping ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    // Mostrar indicador de "escribiendo" al final si está activo
+                    if (index == chatProvider.messageList.length) {
+                      return const TypingIndicator();
+                    }
 
-                  final message = chatProvider.messageList[index];
-                  return (message.fromWho == FromWho.hers)
-                      ? HerMessageBubble(message: message)
-                      : MyMessageBubble(message: message);
+                    final message = chatProvider.messageList[index];
+                    return (message.fromWho == FromWho.hers)
+                        ? HerMessageBubble(message: message)
+                        : MyMessageBubble(message: message);
+                  },
+                ),
+              ),
+              MessageFieldBox(
+                onValue: (String value) {
+                  chatProvider.sendMessage(value);
                 },
               ),
-            ),
-            MessageFieldBox(
-              onValue: (String value) {
-                chatProvider.sendMessage(value);
-              },
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
